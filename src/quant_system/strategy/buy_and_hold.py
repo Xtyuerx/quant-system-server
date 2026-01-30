@@ -1,8 +1,15 @@
 from typing import List
-from quant_system.strategy.base import Strategy
-from quant_system.enums.signal import Signal
+from quant_system.strategy.base_strategy import BaseStrategy
+from quant_system.backtest.signal import Signal, SignalType
 
-
-class BuyAndHoldStrategy(Strategy):
-    def generate_signals(self, prices: List[float]) -> List[Signal]:
-        return [Signal.LONG] * len(prices)
+class BuyAndHoldStrategy(BaseStrategy):
+    def generate_signals(self, prices: List[float]):
+        signals = []
+        bought = False
+        for _ in prices:
+            if not bought:
+                signals.append(Signal(type=SignalType.BUY))
+                bought = True
+            else:
+                signals.append(Signal(type=SignalType.HOLD))
+        return signals
