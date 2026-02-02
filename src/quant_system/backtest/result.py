@@ -1,27 +1,37 @@
+from dataclasses import dataclass
+from typing import List
+
+
+@dataclass
 class BacktestResult:
-    def __init__(
-        self,
-        equity_curve,
-        total_return=None,
-        max_drawdown=None,
-    ):
-        self.equity_curve = equity_curve
-        self.final_equity = equity_curve[-1]
+    symbol: str
+    initial_cash: float
+    final_equity: float
+    equity_curve: List[float]
 
-        # 允许 SimpleBacktest 传，也允许这里兜底算
-        if total_return is None:
-            self.total_return = (self.final_equity / equity_curve[0]) - 1
-        else:
-            self.total_return = total_return
+    @property
+    def total_return(self) -> float:
+        return (self.final_equity / self.initial_cash) - 1
 
-        self.max_drawdown = max_drawdown
+    @property
+    def max_drawdown(self) -> float:
+        peak = self.equity_curve[0]
+        max_dd = 0.0
 
-    def __repr__(self):
-        parts = [
-            f"final_equity={self.final_equity:.2f}",
-            f"total_return={self.total_return:.2%}",
-        ]
-        if self.max_drawdown is not None:
-            parts.append(f"max_drawdown={self.max_drawdown:.2%}")
+        for equity in self.equity_curve:
+            peak = max(peak, equity)
+            drawdown = (equity - peak) / peak
+            max_dd = min(max_dd, drawdown)
 
-        return f"BacktestResult({', '.join(parts)})"
+        return max_dd
+
+    def summary(self) -> dict:
+        return {
+            "symbol": self.symbol,
+            "final_equity": self.final_equity,
+            "total_return": self.total_return,
+            "max_drawdown": self.max_drawdown,
+        }
+
+    def to_row(self) -> dict:
+        return self.summary()

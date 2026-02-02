@@ -1,6 +1,7 @@
 import numpy as np
 from collections import Counter
 from quant_system.backtest.signal import Signal, SignalType
+from typing import List
 
 
 class MarketSentiment:
@@ -73,11 +74,7 @@ class MarketSentiment:
         # 情绪均线
         sentiment_ma = self.moving_average(sentiment, self.ma_window)
 
-         # 👇 新增：先看情绪本身
-        print("Sentiment values:", sentiment)
-        print("Thresholds:", self.long_threshold, self.short_threshold)
-
-        signals: List[Signal] = []
+        signals: list[Signal] = []
 
         for score in sentiment_ma:
             if score > self.long_threshold:

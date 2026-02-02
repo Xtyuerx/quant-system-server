@@ -14,4 +14,9 @@ class Signal:
         self.type = type
 
     def __repr__(self):
-        return f"Signal(type={self.type.value})"
+        parts = [
+            f"final_equity={self.final_equity:.2f}",
+            f"total_return={self.total_return:.2%}",
+            f"max_drawdown={self.max_drawdown:.2%}",
+        ]
+        return f"BacktestResult({', '.join(parts)})"

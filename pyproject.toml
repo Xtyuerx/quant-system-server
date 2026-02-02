@@ -5,7 +5,7 @@ description = ""
 authors = [{ name = "xtyuerx", email = "xiangtaiyua06299@biaoguoworks.com" }]
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = ["matplotlib (>=3.10.8,<4.0.0)", "numpy (>=2.4.1,<3.0.0)"]
+dependencies = ["matplotlib (>=3.10.8,<4.0.0)", "numpy (>=2.4.1,<3.0.0)", "pandas (>=3.0.0,<4.0.0)"]
 
 [tool.poetry]
 packages = [{ include = "quant_system", from = "src" }]

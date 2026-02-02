@@ -1,27 +1,25 @@
 from typing import List
 
 
-def total_return(equity_curve: List[float]) -> float:
+def total_return(self) -> float:
     """
-    总收益率
+    领域属性
     """
-    if not equity_curve:
-        return 0.0
-    return (equity_curve[-1] / equity_curve[0]) - 1
+    return (self.final_equity / self.initial_equity) - 1
 
-
-def max_drawdown(equity_curve: List[float]) -> float:
-    """
-    最大回撤（负数）
-    """
-    peak = equity_curve[0]
+def calc_max_drawdown(self) -> float:
+    peak = self.equity_curve[0]
     max_dd = 0.0
 
-    for equity in equity_curve:
-        if equity > peak:
-            peak = equity
+    for equity in self.equity_curve:
+        peak = max(peak, equity)
         drawdown = (equity - peak) / peak
-        if drawdown < max_dd:
-            max_dd = drawdown
+        max_dd = min(max_dd, drawdown)
 
     return max_dd
+
+@property
+def max_drawdown(self) -> float:
+    if "max_drawdown" not in self._metrics:
+        self._metrics["max_drawdown"] = self.calc_max_drawdown()
+    return self._metrics["max_drawdown"]
