@@ -1,15 +1,19 @@
+from quant_system.backtest.engine import BacktestEngine
+
 class MultiBacktest:
-    def __init__(self, backtests):
-        """
-        backtests: List[BacktestEngine]
-        """
-        self.backtests = backtests
+    def __init__(self, data_list):
+        self.data_list = data_list
 
-    def run(self):
-        results = {}
+    def run(self) -> list:
+        results = []
 
-        for bt in self.backtests:
+        for symbol, prices, signals in self.data_list:
+            bt = BacktestEngine(
+                prices=prices,
+                signals=signals,
+                symbol=symbol,
+            )
             result = bt.run()
-            results[result.symbol] = result
+            results.append(result)
 
         return results

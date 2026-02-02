@@ -1,48 +1,40 @@
-from quant_system.strategy.signal import SignalType
-from quant_system.backtest.result import BacktestResult
-
 class BacktestEngine:
-    def __init__(self, prices, signals, symbol, initial_cash=100_000):
+    def __init__(
+        self,
+        prices: list[float],
+        signals: list,
+        symbol: str,
+        initial_cash: float = 100_000,
+    ):
         self.prices = prices
         self.signals = signals
         self.symbol = symbol
+
         self.initial_cash = initial_cash
-
         self.cash = initial_cash
-        self.position = 0.0
-        self.equity_curve = []
+        self.position = 0.0  # 持有股数（必须是 float）
 
-    def _calc_max_drawdown(self, equity_curve):
-        peak = equity_curve[0]
-        max_dd = 0.0
-        for equity in equity_curve:
-            peak = max(peak, equity)
-            dd = (equity - peak) / peak
-            max_dd = min(max_dd, dd)
-        return max_dd
+    def run(self) -> list[float]:
+        """
+        E6：执行回测，返回资金曲线（equity_curve）
+        """
+        equity_curve: list[float] = []
 
-    # 👇 就是它
-    def run(self):
-        for price, signal in zip(self.prices, self.signals):
+        for i, price in enumerate(self.prices):
+            signal = self.signals[i]
 
-            if signal == SignalType.BUY and self.position == 0:
+            # 买入：全仓
+            if signal.name == "BUY" and self.position == 0:
                 self.position = self.cash / price
                 self.cash = 0.0
 
-            elif signal == SignalType.SELL and self.position > 0:
+            # 卖出：清仓
+            elif signal.name == "SELL" and self.position > 0:
                 self.cash = self.position * price
                 self.position = 0.0
 
+            # 当前总资产
             equity = self.cash + self.position * price
-            self.equity_curve.append(equity)
+            equity_curve.append(equity)
 
-        final_equity = self.equity_curve[-1]
-        total_return = final_equity / self.initial_cash - 1
-        max_dd = self._calc_max_drawdown(self.equity_curve)
-
-        return BacktestResult(
-            symbol=self.symbol,
-            initial_cash=self.initial_cash,
-            final_equity=final_equity,
-            equity_curve=self.equity_curve,
-        )
+        return equity_curve
