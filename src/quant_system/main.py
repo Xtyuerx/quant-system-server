@@ -6,6 +6,8 @@ from quant_system.visualization.plotting import plot_equity_multi
 from quant_system.strategy.signal import SignalType
 from quant_system.runner.param_scan import run_param_scan
 from quant_system.strategy.simple_ma import SimpleMAStrategy
+from quant_system.report.export import export_csv
+from quant_system.report.equity_plot import plot_equity_curve
 
 def main():
     parser = argparse.ArgumentParser()
@@ -44,34 +46,12 @@ def main():
         param_grid={"window": [3, 5, 10, 20]},
     )
 
-    # 🔥 核心：拉平
-    df = pd.DataFrame([r.to_dict() for r in results])
+    results \
+        .sort_by("total_return", descending=True) \
+        .head(5) \
+        .pretty_print()
 
-    # 排序规则（示例）
-    df = df.sort_values(
-        by=["total_return", "max_drawdown"],
-        ascending=[False, True],
-    )
+    best = results.best("total_return")
+    plot_equity_curve(best)
 
-    print(df)
-
-    top_results = sorted(
-        results,
-        key=lambda r: r.total_return,
-        reverse=True,
-    )[:3]
-
-    plot_equity_multi(
-        top_results,
-        title="Top 3 MA Windows",
-    )
-
-    results_sorted = sorted(
-        results,
-        key=lambda r: r.total_return,
-        reverse=True,
-    )
-
-    for r in results_sorted:
-        print(r.params, r.total_return, r.max_drawdown)
-
+    results.to_csv("ma_scan_results_head_5.csv")

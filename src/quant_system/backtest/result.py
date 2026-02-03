@@ -46,6 +46,17 @@ class BacktestResult:
     def to_row(self) -> dict:
         row = {
             "symbol": self.symbol,
+            "final_equity": f"{self.final_equity:,.2f}",
+            "total_return": f"{self.total_return * 100:.2f}%",
+            "max_drawdown": f"{self.max_drawdown * 100:.2f}%",
+        }
+        if self.params:
+            row.update(self.params)
+        return row
+
+    def to_dict(self) -> dict:
+        row = {
+            "symbol": self.symbol,
             "final_equity": self.final_equity,
             "total_return": self.total_return,
             "max_drawdown": self.max_drawdown,
@@ -53,14 +64,14 @@ class BacktestResult:
         if self.params:
             row.update(self.params)
         return row
-
-    def to_dict(self) -> dict:
-        return {
+    
+    def to_pretty_dict(self) -> dict:
+        row = {
             "symbol": self.symbol,
             "final_equity": f"${self.final_equity:,.2f}",
             "total_return": f"{self.total_return * 100:.2f}%",
             "max_drawdown": f"{self.max_drawdown * 100:.2f}%",
         }
         if self.params:
-            dict.update(self.params)
-        return dict
+            row.update(self.params)
+        return row

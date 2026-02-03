@@ -1,12 +1,14 @@
-import numpy as np
+from quant_system.sentiment.factor.base import Factor
 
 
-def momentum_sentiment(close: np.ndarray, window: int = 20) -> float:
-    """
-    趋势一致性
-    """
-    if len(close) < window:
-        return 0.0
+class MomentumFactor(Factor):
+    def __init__(self, window: int):
+        self.window = window
 
-    ret = close[-1] / close[-window] - 1
-    return float(np.tanh(ret * 5))
+    def compute(self, prices, t):
+        values = {}
+        for symbol, series in prices.items():
+            if t < self.window:
+                continue
+            values[symbol] = series[t] / series[t - self.window] - 1
+        return values
