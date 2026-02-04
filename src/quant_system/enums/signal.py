@@ -1,20 +1,9 @@
-from enum import Enum
+from quant_system.backtest.signal import SignalType
 
-class Signal(Enum):
-    LONG = 1
-    SHORT = -1
-    HOLD = 0
-
-def sentiment_to_signal(sentiment: float) -> Signal:
-    """
-    简单规则：
-      sentiment > 0.3 → 买入
-      sentiment < -0.3 → 卖出
-      否则 → 观望
-    """
+def sentiment_to_signal(sentiment: float) -> SignalType:
     if sentiment > 0.3:
-        return Signal.LONG
+        return SignalType.BUY
     elif sentiment < -0.3:
-        return Signal.SHORT
+        return SignalType.EXIT
     else:
-        return Signal.HOLD
+        return SignalType.HOLD

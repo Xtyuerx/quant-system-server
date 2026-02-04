@@ -1,6 +1,6 @@
 from typing import List
 from quant_system.strategy.base import Strategy
-from quant_system.strategy.signal import SignalType
+from quant_system.backtest.signal import SignalType
 
 class SimpleMAStrategy(Strategy):
     def __init__(self, window: int = 3):

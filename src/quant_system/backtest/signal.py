@@ -2,8 +2,8 @@ from enum import Enum
 
 class SignalType(Enum):
     BUY = "BUY"
-    SELL = "SELL"
-    SELL_STOP = "SELL_STOP"
+    EXIT = "EXIT"
+    SELL_STOP = "SELL_STOP"  # 预留给风控
     HOLD = "HOLD"
 
 class Signal:
@@ -12,11 +12,7 @@ class Signal:
     """
     def __init__(self, type: SignalType):
         self.type = type
+        self.name = type.value  # ✅ 保持兼容性
 
     def __repr__(self):
-        parts = [
-            f"final_equity={self.final_equity:.2f}",
-            f"total_return={self.total_return:.2%}",
-            f"max_drawdown={self.max_drawdown:.2%}",
-        ]
-        return f"BacktestResult({', '.join(parts)})"
+        return f"Signal({self.type.value})"  # ✅ 修正

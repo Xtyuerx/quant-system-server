@@ -31,23 +31,15 @@ def run_param_scan(
         strategy = strategy_cls(**params)
         signals = strategy.generate_signals(prices)
 
-        # 2️⃣ 跑回测（E6）
+        # 2️⃣ 跑回测
         bt = BacktestEngine(
             symbol=symbol,
             prices=prices,
             signals=signals,
         )
-        equity_curve = bt.run()
+        result = bt.run()  # ✅ 现在直接返回 BacktestResult
 
-        # 3️⃣ 包装结果（E7）
-        result = BacktestResult(
-            symbol=symbol,
-            initial_cash=bt.initial_cash,
-            final_equity=equity_curve[-1],
-            equity_curve=equity_curve,
-        )
-
-        # 4️⃣ 记录完整参数组合
+        # 3️⃣ 记录参数组合
         result.params = params
         results.append(result)
 
