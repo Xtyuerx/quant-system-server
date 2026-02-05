@@ -16,3 +16,34 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 quant = "quant_system.main:main"
+improvements = "quant_system.test_improvements:main"
+features = "quant_system.test_advanced_features:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",                    # 详细输出
+    "--tb=short",            # 简短的错误回溯
+    "--strict-markers",      # 严格标记检查
+    "-ra",                   # 显示所有测试结果摘要
+]
+
+# 代码覆盖率配置（如果安装了 pytest-cov）
+[tool.coverage.run]
+source = ["src/quant_system"]
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+]
+
+[tool.coverage.report]
+precision = 2
+skip_empty = true
+[dependency-groups]
+dev = [
+    "pytest (>=9.0.2,<10.0.0)",
+    "pytest-cov (>=7.0.0,<8.0.0)"
+]
